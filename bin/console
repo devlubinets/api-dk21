@@ -1,8 +1,11 @@
 #!/usr/bin/env php
+
 <?php
 
 use App\Kernel;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use App\Commands\ParserCommand;
+use App\Service\GetDictionaryService;
 
 if (!is_dir(dirname(__DIR__).'/vendor')) {
     throw new LogicException('Dependencies are missing. Try running "composer install".');
@@ -16,6 +19,9 @@ require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 
 return function (array $context) {
     $kernel = new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
+    $application = new Application($kernel);
+    $application->add(new ParserCommand($kernel->getContainer()->get(GetDictionaryService::class))); 
 
-    return new Application($kernel);
+    return $application;
+    // return new Application($kernel);
 };
