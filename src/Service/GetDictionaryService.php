@@ -12,32 +12,6 @@ class GetDictionaryService
      * @return SplObjectStorage
      */
 
-     private $code;
-     private $description;
- 
-     public function getCode(): string
-     {
-         return $this->code;
-     }
- 
-     public function setCode(string $code): self
-     {
-         $this->code = $code;
-         return $this;
-     }
- 
-     public function getDescription(): string
-     {
-         return $this->description;
-     }
- 
-     public function setDescription(string $description): self
-     {
-         $this->description = $description;
-         return $this;
-     }
-
-
     public function getDictionaryData(): SplObjectStorage
     {
         $storage = new SplObjectStorage();
@@ -79,25 +53,25 @@ class GetDictionaryService
     
     }
 
-    protected function parsePDFFile($pdf): array
+    protected function parsePDFFile($pdf): array 
     {
-        $parser = new Parser();
-        $pdf = $parser->parseContent($pdf);
-        $text = $pdf->getText();
-            // echo  $text;
-        $lines = explode("\n", $text);
-        $dataArray = [];
-    
-        foreach ($lines as $line) {
-            $parts = explode(" ", $line, 2);
-            
-            if (count($parts) == 2) {
-                $code = trim($parts[0]);
-                $description = trim($parts[1]);
-                $dataArray[] = ["code" => $code, "description" => $description];
-            }
+        $parser = new Parser();      
+        $pdf = $parser->parseContent($pdf);       
+        $text = $pdf->getText();     
+        $pattern = '/(\d{8}-\d{1})\s(.+)/u';
+        $tableData = [];       
+        if (preg_match_all($pattern, $text, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                        $code = $match[1];
+                        $description = trim($match[2]);
+                        $tableData[] = [
+                            'code' => $code,
+                            'description' => $description,
+                        ];
+                    }         
         }
     
-        return $dataArray;
+    return $tableData;
+
     }
 }

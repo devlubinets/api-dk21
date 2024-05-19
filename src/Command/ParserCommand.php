@@ -36,11 +36,11 @@ class ParserCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $dictionary = $this->getDictionaryService->getDictionaryData();
-
+    
         foreach ($dictionary as $item) {
-            $output->writeln(sprintf('Code: %s, Description: %s', $item->getCode(), $item->getDescription()));
+            $output->writeln(sprintf('Code: %s Description: %s', $item->getCode(), $item->getDescription()));
         }
-        
-        return Command::SUCCESS;
+
+         return Command::SUCCESS;
     }
 }
