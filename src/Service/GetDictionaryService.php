@@ -58,17 +58,18 @@ class GetDictionaryService
         $parser = new Parser();      
         $pdf = $parser->parseContent($pdf);       
         $text = $pdf->getText();     
-        $pattern = '/(\d{8}-\d{1})\s(.+)/u';
-        $tableData = [];       
+        $pattern = '/(\d{8}-\d{1})\s+((?:(?!\d{8}-\d{1}|ДК 021:2015).)*)/us';
+        $tableData = [];
+        
         if (preg_match_all($pattern, $text, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
-                        $code = $match[1];
-                        $description = trim($match[2]);
-                        $tableData[] = [
-                            'code' => $code,
-                            'description' => $description,
-                        ];
-                    }         
+                $code = $match[1];
+                $description = trim(preg_replace('/\s+/', ' ', $match[2]));
+                $tableData[] = [
+                    'code' => $code,
+                    'description' => $description,
+                ];
+            }
         }
     
     return $tableData;
