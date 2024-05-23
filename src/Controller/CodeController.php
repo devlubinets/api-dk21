@@ -5,11 +5,10 @@ namespace App\Controller;
 use App\Service\GetDictionaryService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
+use Symfony\Component\Routing\Attribute\Route;
 
 class CodeController extends AbstractController
 {
-    //private $request;
     private $dictionaryService;
 
     public function __construct(GetDictionaryService $dictionaryService)
@@ -17,7 +16,7 @@ class CodeController extends AbstractController
         $this->dictionaryService = $dictionaryService;
     }
 
-    
+    #[Route('/code/getCode/{searchWord}', name: 'app_get_code')]
     public function getCode(string $searchWord)
     {
         $storage = $this->dictionaryService->getDictionaryData();
@@ -28,6 +27,7 @@ class CodeController extends AbstractController
         }
         return new JsonResponse(['error' => 'Code not found']);
     }
+    #[Route('/code/getGroupOfCode/{searchWord}/{quantityCodes}', name: 'app_get_group_of_code')]
 
     public function getGroupOfCode(string $searchWord, int $quantityCodes)
     {
@@ -42,7 +42,6 @@ class CodeController extends AbstractController
                     break;
                 }
             }
-            return new JsonResponse(['error' => 'Code not found']);
         }
         return new JsonResponse(['data' => $groupCodes]);
     }
